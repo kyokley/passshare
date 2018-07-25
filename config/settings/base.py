@@ -2,6 +2,7 @@
 Base settings to build other settings files upon.
 """
 
+import os
 import environ
 
 ROOT_DIR = environ.Path(__file__) - 3  # (passshare/config/settings/base.py - 3 = passshare/)
@@ -13,6 +14,25 @@ READ_DOT_ENV_FILE = env.bool('DJANGO_READ_DOT_ENV_FILE', default=False)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(ROOT_DIR.path('.env')))
+
+# Generate a secret key
+# Borrowed from https://gist.github.com/ndarville/3452907
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SECRET_FILE = os.path.join(BASE_DIR, 'secret.txt')
+try:
+    with open(SECRET_FILE, 'r') as secret_file:
+        SECRET_KEY = secret_file.read().strip()
+except IOError:
+    try:
+        import random
+        SECRET_KEY = ''.join([random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz'
+                                                           'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                                                           '0123456789!@#$%^&*(-_=+)')
+                                for i in range(50)])
+        with open(SECRET_FILE, 'w') as secret_file:
+            secret_file.write(SECRET_KEY)
+    except IOError:
+        Exception('Please create a %s file with random characters to generate your secret key!' % SECRET_FILE)
 
 # GENERAL
 # ------------------------------------------------------------------------------
