@@ -23,6 +23,8 @@ FILENAME_MAX_LENGTH = 32
 USERNAME_MAX_LENGTH = 32
 SITE_MAX_LENGTH = 256
 
+DISPLAY_TRUNCATE_LENGTH = 29 # 32 minus the 3 chars for an '...'
+
 class Secret(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               on_delete=models.CASCADE)
@@ -45,6 +47,12 @@ class Secret(models.Model):
 
     class Meta:
         abstract = True
+
+    @property
+    def display_hash(self):
+        return (self.unencrypted_hash[:DISPLAY_TRUNCATE_LENGTH] + '...'
+                    if len(self.unencrypted_hash) > DISPLAY_TRUNCATE_LENGTH
+                    else self.unencrypted_hash)
 
     @classmethod
     def new(cls,
@@ -74,6 +82,12 @@ class TextSecret(Secret):
 
     class Meta:
         unique_together = ('owner', 'label')
+
+    @property
+    def display_data(self):
+        return (self.data[:DISPLAY_TRUNCATE_LENGTH] + '...'
+                    if len(self.data) > DISPLAY_TRUNCATE_LENGTH
+                    else self.data)
 
     @classmethod
     def new(cls,
