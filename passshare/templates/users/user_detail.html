@@ -1,36 +1,80 @@
 {% extends "base.html" %}
 {% load static %}
+{% load static i18n %}
 
 {% block title %}User: {{ object.username }}{% endblock %}
 
+{% block active_navbar %}
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">Home </a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="{% url 'about' %}">About</a>
+        </li>
+        {% if request.user.is_authenticated %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'my_shares' %}">My Shares</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'recover' %}">Recover</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block active_navbar_right %}
+    <ul class="navbar-nav">
+        {% if request.user.is_authenticated %}
+            <li class="nav-item active">
+            {# URL provided by django-allauth/account/urls.py #}
+            <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %} <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+            {# URL provided by django-allauth/account/urls.py #}
+            <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+            {# URL provided by django-allauth/account/urls.py #}
+            <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+            </li>
+            <li class="nav-item">
+            {# URL provided by django-allauth/account/urls.py #}
+            <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
 {% block content %}
-<div class="container">
+    <div class="container">
 
-  <div class="row">
-    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12">
 
-      <h2>{{ object.username }}</h2>
-      {% if object.name %}
-        <p>{{ object.name }}</p>
-      {% endif %}
+                <h2>{{ object.username }}</h2>
+                {% if object.name %}
+                    <p>{{ object.name }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if object == request.user %}
+            <!-- Action buttons -->
+            <div class="row">
+
+                <div class="col-sm-12">
+                    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
+                    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
+                    <!-- Your Stuff: Custom user template urls -->
+                </div>
+
+            </div>
+            <!-- End Action buttons -->
+        {% endif %}
+
+
     </div>
-  </div>
-
-{% if object == request.user %}
-<!-- Action buttons -->
-<div class="row">
-
-  <div class="col-sm-12">
-    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
-    <!-- Your Stuff: Custom user template urls -->
-  </div>
-
-</div>
-<!-- End Action buttons -->
-{% endif %}
-
-
-</div>
 {% endblock content %}
 

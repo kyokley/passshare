@@ -42,13 +42,26 @@
             <a class="navbar-brand" href="{% url 'home' %}">PassShare</a>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="{% url 'about' %}">About</a>
-                    </li>
+                {% block active_navbar %}
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                        </li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item">
+                            <a class="nav-link" href="{% url 'my_shares' %}">My Shares</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link" href="{% url 'recover' %}">Recover</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endblock %}
+                {% block active_navbar_right %}
+                <ul class="navbar-nav">
                     {% if request.user.is_authenticated %}
                         <li class="nav-item">
                         {# URL provided by django-allauth/account/urls.py #}
@@ -69,6 +82,7 @@
                         </li>
                     {% endif %}
                 </ul>
+                {% endblock %}
             </div>
             </nav>
 
