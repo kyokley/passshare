@@ -259,3 +259,4 @@ SOCIALACCOUNT_ADAPTER = 'passshare.users.adapters.SocialAccountAdapter'
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+USER_FILE_DIR_ROOT = '/path/to/user/dir'

@@ -60,3 +60,4 @@ INSTALLED_APPS += ['django_extensions']  # noqa F405
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+USER_FILE_DIR_ROOT = 'passshare_doc_dir'
