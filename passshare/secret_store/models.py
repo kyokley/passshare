@@ -17,7 +17,7 @@ class Secret(models.Model):
                              blank=True,
                              help_text='Human readable label that can optionally be used for convenience',
                              )
-    data = models.TextField(null=False,
+    data = models.TextField(null=False, # base64 encoded encrypted data
                             blank=False,
                             )
     viewers = models.ManyToManyField(settings.AUTH_USER_MODEL,
@@ -28,6 +28,9 @@ class Secret(models.Model):
                                     default=14,
                                     choices=COUNTDOWN_CHOICES,
                                     )
+    unencrypted_hash = models.CharField(max_length=64,
+                                        null=False,
+                                        blank=False)
     date_created = models.DateField(auto_now_add=True)
     date_edited = models.DateField(auto_now=True)
 
