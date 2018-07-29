@@ -1,5 +1,6 @@
 import base64
 import os
+import hashlib
 
 from django.db import models
 from django.conf import settings
@@ -45,36 +46,21 @@ class Secret(models.Model):
     class Meta:
         abstract = True
 
-    def new(self,
+    @classmethod
+    def new(cls,
             owner,
             unencrypted_hash,
             countdown=COUNTDOWN_DEFAULT,
             size=SIZE_DEFAULT,
             ):
-        self.owner = owner
-        self.countdown = countdown
-        self.unencrypted_hash = unencrypted_hash
-        self.size = size
+        instance = cls()
 
-        self.save()
+        instance.owner = owner
+        instance.countdown = countdown
+        instance.unencrypted_hash = unencrypted_hash
+        instance.size = size
 
-    def new_unencrypted(self,
-                        owner,
-                        label,
-                        unencrypted_data='test_string',
-                        countdown=COUNTDOWN_DEFAULT,
-                        ):
-        if isinstance(unencrypted_data, str):
-            unencrypted_data = unencrypted_data.encode('utf-8')
-
-        fake_data = base64.b64encode(unencrypted_data)
-        size = len(fake_data)
-
-        self.new(owner,
-                 label,
-                 fake_data,
-                 countdown=countdown,
-                 size=size)
+        return instance
 
 class TextSecret(Secret):
     data = models.TextField(null=False, # base64 encoded encrypted data
@@ -89,11 +75,12 @@ class TextSecret(Secret):
     class Meta:
         unique_together = ('owner', 'label')
 
-    def new(self,
+    @classmethod
+    def new(cls,
             owner,
-            unencrypted_hash,
             label,
             data,
+            unencrypted_hash,
             countdown=COUNTDOWN_DEFAULT,
             ):
         if not label:
@@ -101,14 +88,38 @@ class TextSecret(Secret):
         if not data:
             raise Exception('Data must be defined and not empty')
 
-        self.label = label
-        self.data = data
+        instance = super().new(owner,
+                               unencrypted_hash,
+                               countdown=countdown,
+                               size=len(data),
+                               )
+        instance.label = label
+        instance.data = data
+        instance.save()
 
-        super().new(owner,
-                    unencrypted_hash,
-                    countdown=countdown,
-                    size=len(data),
-                    )
+        return instance
+
+    @classmethod
+    def new_from_unencrypted(cls,
+                             owner,
+                             label,
+                             unencrypted_data='test_string',
+                             countdown=COUNTDOWN_DEFAULT,
+                             ):
+        if isinstance(unencrypted_data, str):
+            unencrypted_data = unencrypted_data.encode('utf-8')
+
+        unencrypted_hash = hashlib.sha256(unencrypted_data).hexdigest()
+        fake_data = base64.b64encode(unencrypted_data).decode('utf-8')
+
+        instance = cls.new(owner,
+                           label,
+                           fake_data,
+                           unencrypted_hash,
+                           countdown=countdown,
+                           )
+        return instance
+
 
 class FileSecret(Secret):
     file_path = models.TextField(null=True, # location on the filesystem where encrypted data lives
