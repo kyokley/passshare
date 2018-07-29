@@ -12,7 +12,9 @@ class Secret(models.Model):
     data = models.TextField(null=False,
                             blank=False,
                             )
-    viewers = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    viewers = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                     related_name='%(class)s_related',
+                                     )
     date_created = models.DateField(auto_now_add=True)
     date_edited = models.DateField(auto_now=True)
 
