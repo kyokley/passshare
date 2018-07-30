@@ -38,16 +38,16 @@
                 <div class="tab-pane fade show active" id="text-tab" role="tabpanel" aria-labelledby="nav-home-tab">
                     <h5 class="card-title">Text-based Shares</h5>
                     {% if text_shares %}
-                        <div class="accordion" id="accordionExample">
+                        <div class="accordion" id="text-based-accordion">
                             {% for text_share in text_shares %}
                                 <div class="card">
-                                    <div class="card-header" id="heading{{forloop.counter}}">
+                                    <div class="card-header" id="text-based-heading{{forloop.counter}}">
                                         <h5 class="mb-0">
-                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapse{{forloop.counter}}">{{text_share.label}} : {{text_share.display_hash}}</button>
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#text-based-collapse{{forloop.counter}}" aria-expanded="true" aria-controls="text-based-collapse{{forloop.counter}}">{{text_share.label}} : {{text_share.display_hash}}</button>
                                         </h5>
                                     </div>
 
-                                    <div id="collapse{{forloop.counter}}" class="collapse" aria-labelledby="heading{{forloop.counter}}" data-parent="#accordionExample">
+                                    <div id="text-based-collapse{{forloop.counter}}" class="collapse" aria-labelledby="text-based-heading{{forloop.counter}}" data-parent="#text-based-accordion">
                                         <div class="card-body">
                                             <table class="table table-borderless">
                                                 <thead>
@@ -88,9 +88,38 @@
                 <div class="tab-pane fade" id="file-tab" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <h5 class="card-title">File-based Shares</h5>
                     {% if file_shares %}
-                        {% for file_share in file_shares %}
-                            <p class="card-text">{{file_share.label}}</p>
-                        {% endfor %}
+                        <div class="accordion" id="file-based-accordion">
+                            {% for file_share in file_shares %}
+                                <div class="card">
+                                    <div class="card-header" id="file-based-heading{{forloop.counter}}">
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#file-based-collapse{{forloop.counter}}" aria-expanded="true" aria-controls="file-based-collapse{{forloop.counter}}">{{file_share.filename}} : {{file_share.display_hash}}</button>
+                                        </h5>
+                                    </div>
+
+                                    <div id="file-based-collapse{{forloop.counter}}" class="collapse" aria-labelledby="file-based-heading{{forloop.counter}}" data-parent="#file-based-accordion">
+                                        <div class="card-body">
+                                            <table class="table table-borderless">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Encrypted Data</th>
+                                                        <th scope="col">Size (in bytes)</th>
+                                                        <th scope="col">Countdown</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>{{file_share.display_data}}</td>
+                                                        <td>{{file_share.size}}</td>
+                                                        <td>{{file_share.countdown}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% else %}
                         <p class="card-text">Nothing to show here</p>
                     {% endif %}

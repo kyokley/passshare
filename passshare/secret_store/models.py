@@ -23,7 +23,7 @@ FILENAME_MAX_LENGTH = 32
 USERNAME_MAX_LENGTH = 32
 SITE_MAX_LENGTH = 256
 
-DISPLAY_TRUNCATE_LENGTH = 29 # 32 minus the 3 chars for an '...'
+DISPLAY_TRUNCATE_LENGTH = 32
 
 class Secret(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -82,6 +82,13 @@ class TextSecret(Secret):
 
     class Meta:
         unique_together = ('owner', 'label')
+
+    def __str__(self):
+        return 'id: {id} O: {owner} L: {label} H: {hash}'.format(id=getattr(self, 'id', None),
+                                                                 owner=self.owner.username,
+                                                                 label=self.label,
+                                                                 hash=self.display_hash,
+                                                                 )
 
     @property
     def display_data(self):
@@ -143,42 +150,89 @@ class FileSecret(Secret):
                                 null=False,
                                 blank=False,
                                 help_text='Name of file being stored')
+    _display_data = models.CharField(max_length=DISPLAY_TRUNCATE_LENGTH,
+                                     null=True,
+                                     blank=True)
 
     class Meta:
         unique_together = ('owner', 'filename')
 
-    def new(self,
+    @property
+    def display_data(self):
+        if len(self._display_data) >= DISPLAY_TRUNCATE_LENGTH:
+            return self._display_data + '...'
+        else:
+            return self._display_data
+
+    def __str__(self):
+        return 'id: {id} O: {owner} F: {filename} P: {path} H: {hash}'.format(id=getattr(self, 'id', None),
+                                                                              owner=self.owner.username,
+                                                                              filename=self.filename,
+                                                                              path=self.file_path,
+                                                                              hash=self.display_hash,
+                                                                              )
+
+    @classmethod
+    def new(cls,
             owner,
             unencrypted_hash,
             filename,
             raw_data,
             countdown=COUNTDOWN_DEFAULT,
-            size=SIZE_DEFAULT,
             ):
         if not filename:
             raise Exception('Filename must be defined and not empty')
         if not raw_data:
             raise Exception('Data must be provided')
 
-        self.filename = filename
 
-        super().new(owner,
-                    unencrypted_hash,
-                    countdown=countdown,
-                    size=size)
+        instance = super().new(owner,
+                               unencrypted_hash,
+                               countdown=countdown,
+                               size=len(raw_data))
 
-        self.file_path = self._get_local_file_path(owner)
+        instance.filename = filename
+        instance.save()
 
-        with open(self.file_path, 'wb') as f:
+        instance.file_path = instance._get_local_file_path(owner)
+
+        with open(instance.file_path, 'wb') as f:
             f.write(raw_data)
 
-        self.save()
+        instance._display_data = (raw_data[:DISPLAY_TRUNCATE_LENGTH].decode('utf-8') if len(raw_data) > DISPLAY_TRUNCATE_LENGTH
+                                     else raw_data.decode('utf-8'))
+
+        instance.save()
+        return instance
 
     def _get_local_file_path(self, owner):
         # Create dir for new file
         owner_dir_path = os.path.join(settings.USER_FILE_DIR_ROOT, str(owner.id))
         os.makedirs(owner_dir_path, mode=0o750, exist_ok=True)
         return os.path.join(owner_dir_path, str(self.id))
+
+    @classmethod
+    def new_from_unencrypted(cls,
+                             owner,
+                             unencrypted_file_path,
+                             countdown=COUNTDOWN_DEFAULT,
+                             ):
+        if not unencrypted_file_path or not os.path.exists(unencrypted_file_path):
+            raise Exception('Given unencrypted_file_path does not exist')
+
+        with open(unencrypted_file_path, 'rb') as f:
+            data = f.read()
+
+        unencrypted_hash = hashlib.sha256(data).hexdigest()
+        fake_data = base64.b64encode(data)
+
+        instance = cls.new(owner,
+                           unencrypted_hash,
+                           os.path.basename(unencrypted_file_path),
+                           fake_data,
+                           countdown=countdown,
+                           )
+        return instance
 
 class UPSecret(Secret):
     password = models.TextField(null=False, # base64 encoded encrypted data
@@ -195,6 +249,19 @@ class UPSecret(Secret):
 
     class Meta:
         unique_together = ('owner', 'label', 'username')
+
+    def __str__(self):
+        return 'id: {id} O: {owner} L: {label} U: {username} H: {hash}'.format(id=getattr(self, 'id', None),
+                                                                               owner=self.owner.username,
+                                                                               label=self.label,
+                                                                               username=self.username,
+                                                                               hash=self.display_hash,
+                                                                               )
+    @property
+    def display_password(self):
+        return (self.password[:DISPLAY_TRUNCATE_LENGTH] + '...'
+                    if len(self.password) > DISPLAY_TRUNCATE_LENGTH
+                    else self.password)
 
     def new(self,
             owner,
