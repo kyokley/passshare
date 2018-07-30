@@ -282,3 +282,5 @@ pip-selfcheck.json
 passshare/media/
 
 .pytest_cache/
+
+passshare_doc_dir
