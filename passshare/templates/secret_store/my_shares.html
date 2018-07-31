@@ -78,9 +78,40 @@
                 <div class="tab-pane fade" id="up-tab" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <h5 class="card-title">User/Password-based Shares</h5>
                     {% if up_shares %}
-                        {% for up_share in up_shares %}
-                            <p class="card-text">{{up_share.label}}</p>
-                        {% endfor %}
+                        <div class="accordion" id="up-based-accordion">
+                            {% for up_share in up_shares %}
+                                <div class="card">
+                                    <div class="card-header" id="up-based-heading{{forloop.counter}}">
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#up-based-collapse{{forloop.counter}}" aria-expanded="true" aria-controls="up-based-collapse{{forloop.counter}}">{{up_share.label}} : {{up_share.display_hash}}</button>
+                                        </h5>
+                                    </div>
+
+                                    <div id="up-based-collapse{{forloop.counter}}" class="collapse" aria-labelledby="up-based-heading{{forloop.counter}}" data-parent="#up-based-accordion">
+                                        <div class="card-body">
+                                            <table class="table table-borderless">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Username</th>
+                                                        <th scope="col">Encrypted Password</th>
+                                                        <th scope="col">Size (in bytes)</th>
+                                                        <th scope="col">Countdown</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>{{up_share.username}}</td>
+                                                        <td>{{up_share.password}}</td>
+                                                        <td>{{up_share.size}}</td>
+                                                        <td>{{up_share.countdown}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% else %}
                         <p class="card-text">Nothing to show here</p>
                     {% endif %}

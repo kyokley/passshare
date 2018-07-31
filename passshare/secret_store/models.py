@@ -263,7 +263,8 @@ class UPSecret(Secret):
                     if len(self.password) > DISPLAY_TRUNCATE_LENGTH
                     else self.password)
 
-    def new(self,
+    @classmethod
+    def new(cls,
             owner,
             unencrypted_hash,
             label,
@@ -272,10 +273,45 @@ class UPSecret(Secret):
             countdown=COUNTDOWN_DEFAULT,
             size=SIZE_DEFAULT,
             ):
-        self.username = username
-        self.password = password
-
-        super().new(owner,
+        instance = super().new(owner,
                     unencrypted_hash,
                     countdown=countdown,
                     size=size)
+
+        instance.username = username
+        instance.password = password
+        instance.label = label
+
+        instance.save()
+        return instance
+
+    @classmethod
+    def new_from_unencrypted(cls,
+                             owner,
+                             label,
+                             username,
+                             password,
+                             countdown=COUNTDOWN_DEFAULT,
+                             ):
+        if not label:
+            raise Exception('Label is a required field')
+        if not username:
+            raise Exception('Username is a required field')
+        if not password:
+            raise Exception('Password is a required field')
+
+        if isinstance(password, str):
+            password = password.encode('utf-8')
+
+        unencrypted_hash = hashlib.sha256(password).hexdigest()
+        fake_password = base64.b64encode(password).decode('utf-8')
+
+        instance = cls.new(owner,
+                           unencrypted_hash,
+                           label,
+                           username,
+                           fake_password,
+                           countdown=countdown,
+                           size=len(fake_password),
+                           )
+        return instance
