@@ -14,7 +14,10 @@
         </li>
         {% if request.user.is_authenticated %}
             <li class="nav-item">
-            <a class="nav-link" href="{% url 'my_shares' %}">My Shares</a>
+            <a class="nav-link" href="{% url 'create' %}">Create</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'manage' %}">Manage</a>
             </li>
             <li class="nav-item">
             <a class="nav-link" href="{% url 'recover' %}">Recover</a>

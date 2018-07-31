@@ -9,7 +9,10 @@
         </li>
         {% if request.user.is_authenticated %}
             <li class="nav-item active">
-            <a class="nav-link" href="{% url 'my_shares' %}">My Shares <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="{% url 'create' %}">Create</a>
+            </li>
+            <li class="nav-item active">
+            <a class="nav-link" href="{% url 'manage' %}">Manage<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
             <a class="nav-link" href="{% url 'recover' %}">Recover</a>
@@ -49,18 +52,18 @@
 
                                     <div id="text-based-collapse{{forloop.counter}}" class="collapse" aria-labelledby="text-based-heading{{forloop.counter}}" data-parent="#text-based-accordion">
                                         <div class="card-body">
-                                            <table class="table table-borderless">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col">Encrypted Data</th>
-                                                        <th scope="col">Size (in bytes)</th>
-                                                        <th scope="col">Countdown</th>
-                                                    </tr>
-                                                </thead>
+                                            <table class="table table-hover table-borderless">
                                                 <tbody>
                                                     <tr>
+                                                        <td>Encrypted Data</td>
                                                         <td>{{text_share.display_data}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Size (in bytes)</td>
                                                         <td>{{text_share.size}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Countdown</td>
                                                         <td>{{text_share.countdown}}</td>
                                                     </tr>
                                                 </tbody>

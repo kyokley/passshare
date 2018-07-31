@@ -3,10 +3,10 @@ from django.http import HttpResponse
 
 from passshare.secret_store.models import TextSecret, UPSecret, FileSecret
 
-def index(request):
-    return HttpResponse('hello world')
+def create(request):
+    pass
 
-def my_shares(request):
+def manage(request):
     user = request.user
 
     # TODO: Make this raise a 403
@@ -22,4 +22,7 @@ def my_shares(request):
                'up_shares': up_shares,
                'file_shares': file_shares,
             }
-    return render(request, 'secret_store/my_shares.html', context)
+    return render(request, 'secret_store/manage.html', context)
+
+def recover(request):
+    pass
