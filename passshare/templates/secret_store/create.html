@@ -8,11 +8,11 @@
         <a class="nav-link" href="{% url 'about' %}">About</a>
         </li>
         {% if request.user.is_authenticated %}
-            <li class="nav-item">
-            <a class="nav-link" href="{% url 'create' %}">Create</a>
-            </li>
             <li class="nav-item active">
-            <a class="nav-link" href="{% url 'manage' %}">Manage<span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="{% url 'create' %}">Create<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'manage' %}">Manage</a>
             </li>
             <li class="nav-item">
             <a class="nav-link" href="{% url 'recover' %}">Recover</a>
@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="card text-center">
+    <div class="card">
         <div class="card-header">
             <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
@@ -39,40 +39,30 @@
         <div class="card-body">
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="text-tab" role="tabpanel" aria-labelledby="nav-home-tab">
-                    <h5 class="card-title">Text-based Shares</h5>
+                    <h5 class="card-title text-center">New Text-based Share</h5>
                     {% if text_shares %}
-                        <div class="accordion" id="text-based-accordion">
-                            {% for text_share in text_shares %}
-                                <div class="card">
-                                    <div class="card-header" id="text-based-heading{{forloop.counter}}">
-                                        <h5 class="mb-0">
-                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#text-based-collapse{{forloop.counter}}" aria-expanded="true" aria-controls="text-based-collapse{{forloop.counter}}">{{text_share.label}} : {{text_share.display_hash}}</button>
-                                        </h5>
-                                    </div>
-
-                                    <div id="text-based-collapse{{forloop.counter}}" class="collapse" aria-labelledby="text-based-heading{{forloop.counter}}" data-parent="#text-based-accordion">
-                                        <div class="card-body">
-                                            <table class="table table-hover table-borderless">
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Encrypted Data</td>
-                                                        <td>{{text_share.display_data}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Size (in bytes)</td>
-                                                        <td>{{text_share.size}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Countdown</td>
-                                                        <td>{{text_share.countdown}}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
+                        <form>
+                            <div class="form-group">
+                                <label for="form-text-label">Label</label>
+                                <input type="text" class="form-control" id="form-text-label" placeholder="Share Label">
+                            </div>
+                            <div class="form-group">
+                                <label for="form-text-data">Data</label>
+                                <input type="text" class="form-control" id="form-text-data" placeholder="Share Data">
+                            </div>
+                            <div class="form-group">
+                                <label for="form-text-select">Passphrase Complexity</label>
+                                <select class="form-control" id="form-text-select">
+                                    <option>4</option>
+                                    <option>8</option>
+                                    <option>12</option>
+                                    <option>16</option>
+                                    <option>20</option>
+                                    <option>24</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </form>
                     {% else %}
                         <p class="card-text">Nothing to show here</p>
                     {% endif %}

@@ -119,10 +119,15 @@
 
             <!-- Your stuff: Third-party javascript libraries go here -->
 
-
+            <script type="text/javascript" src="https://cdn.rawgit.com/ricmoo/aes-js/e27b99df/index.js"></script>
             <!-- place project specific Javascript in this file -->
 
             <script src="{% static 'js/project.js' %}"></script>
+            <script src="{% static 'js/bcrypt.js' %}"></script>
+            <script src="{% static 'js/scrypt.js' %}"></script>
+            <script src="{% static 'js/buffer.js' %}"></script>
+            <script src="{% static 'js/setImmediate.js' %}"></script>
+            <script src="{% static 'js/unorm.js' %}"></script>
 
 
         {% endblock javascript %}
