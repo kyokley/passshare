@@ -40,32 +40,49 @@
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="text-tab" role="tabpanel" aria-labelledby="nav-home-tab">
                     <h5 class="card-title text-center">New Text-based Share</h5>
-                    {% if text_shares %}
-                        <form>
-                            <div class="form-group">
-                                <label for="form-text-label">Label</label>
-                                <input type="text" class="form-control" id="form-text-label" placeholder="Share Label">
+                    <form>
+                        <div class="form-group">
+                            <label for="form-text-label">Label</label>
+                            <input type="text" class="form-control" id="form-text-label" placeholder="Share Label">
+                        </div>
+                        <div class="form-group">
+                            <label for="form-text-data">Data</label>
+                            <input type="text" class="form-control" id="form-text-data" placeholder="Share Data">
+                        </div>
+                        <div class="form-group">
+                            <label for="form-text-select">Passphrase Complexity</label>
+                            <select class="form-control" id="form-text-select">
+                                <option>4</option>
+                                <option>8</option>
+                                <option>12</option>
+                                <option>16</option>
+                                <option>20</option>
+                                <option>24</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#text-based-modal">Create</button>
+                    </form>
+                    <div class="modal fade" id="text-based-modal" tabindex="-1" role="dialog" aria-labelledby="text-based-modal" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="text-based-modal">Create New Share</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="form-text-data">Data</label>
-                                <input type="text" class="form-control" id="form-text-data" placeholder="Share Data">
-                            </div>
-                            <div class="form-group">
-                                <label for="form-text-select">Passphrase Complexity</label>
-                                <select class="form-control" id="form-text-select">
-                                    <option>4</option>
-                                    <option>8</option>
-                                    <option>12</option>
-                                    <option>16</option>
-                                    <option>20</option>
-                                    <option>24</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Create</button>
-                        </form>
-                    {% else %}
-                        <p class="card-text">Nothing to show here</p>
-                    {% endif %}
+                        </div>
+                    </div>
 
                 </div>
                 <div class="tab-pane fade" id="up-tab" role="tabpanel" aria-labelledby="nav-profile-tab">
