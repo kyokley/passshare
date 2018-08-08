@@ -21,3 +21,10 @@ function gen_key(password, salt) {
             }
           });
 }
+
+function get_random_word(){
+    var array = new Uint32Array(1);
+    window.crypto.getRandomValues(array);
+    var item = word_list[array[0] % word_list.length];
+    return item;
+}
