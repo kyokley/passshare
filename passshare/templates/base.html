@@ -118,9 +118,12 @@
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 
             <!-- Your stuff: Third-party javascript libraries go here -->
-
             <script type="text/javascript" src="https://cdn.rawgit.com/ricmoo/aes-js/e27b99df/index.js"></script>
             <!-- place project specific Javascript in this file -->
+
+            <script type="text/javascript">
+                var username = "{{user.username}}";
+            </script>
 
             <script src="{% static 'js/project.js' %}"></script>
             <script src="{% static 'js/bcrypt.js' %}"></script>
@@ -129,8 +132,6 @@
             <script src="{% static 'js/setImmediate.js' %}"></script>
             <script src="{% static 'js/unorm.js' %}"></script>
             <script src="{% static 'js/wordList.js' %}"></script>
-
-
         {% endblock javascript %}
     </body>
 </html>
