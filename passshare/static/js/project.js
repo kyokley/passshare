@@ -5,7 +5,7 @@ var N = 1024, r = 8, p = 1;
 
 var dkLen = 32;
 
-function encrypt_data(num_words, data, attempts) {
+function encrypt_data(num_words, data, attempts, progress_element) {
     if(attempts <= 0){
         console.log("Out of attempts. Giving up.");
         return;
@@ -22,7 +22,7 @@ function encrypt_data(num_words, data, attempts) {
     try{
         scrypt(password_buffer, salt_buffer, N, r, p, dkLen, function(error, progress, key) {
             if (error) {
-                key_fail_callback(num_words, data, attempts);
+                key_fail_callback(num_words, data, attempts, progress_element);
 
             } else if (key) {
                 console.log("Found: " + key);
@@ -35,15 +35,19 @@ function encrypt_data(num_words, data, attempts) {
             } else {
                 // update UI with progress complete
                 console.log(progress);
+
+                if (progress_element){
+                    progress_element.style = "width: " + progress * 100 + "%";
+                }
             }
         });
     } catch(err) {
-        key_fail_callback(num_words, data, attempts);
+        key_fail_callback(num_words, data, attempts, progress_element);
     }
 }
 
-function key_fail_callback(num_words, data, attempts){
-    encrypt_data(num_words, data, attempts - 1);
+function key_fail_callback(num_words, data, attempts, progress_element){
+    encrypt_data(num_words, data, attempts - 1, progress_element);
 }
 
 function get_random_word(){
