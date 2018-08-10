@@ -5,7 +5,7 @@ var N = 1024, r = 8, p = 1;
 
 var dkLen = 32;
 
-function encrypt_data(num_words, data, attempts, progress_element) {
+function encrypt_data(num_words, data, attempts, modal_body_elem) {
     if(attempts <= 0){
         console.log("Out of attempts. Giving up.");
         return;
@@ -19,10 +19,12 @@ function encrypt_data(num_words, data, attempts, progress_element) {
 
     password_buffer = new buffer.SlowBuffer(passphrase.normalize("NFKC"));
     salt_buffer = new buffer.SlowBuffer(username.normalize("NFKC"));
+
+    password_array = [...password_buffer];
     try{
-        scrypt(password_buffer, salt_buffer, N, r, p, dkLen, function(error, progress, key) {
+        scrypt(password_array, salt_buffer, N, r, p, dkLen, function(error, progress, key) {
             if (error) {
-                key_fail_callback(num_words, data, attempts, progress_element);
+                key_fail_callback(num_words, data, attempts, modal_body_elem);
 
             } else if (key) {
                 console.log("Found: " + key);
@@ -31,23 +33,22 @@ function encrypt_data(num_words, data, attempts, progress_element) {
                 var encrypted_bytes = aes_ctr.encrypt(text_bytes);
                 //var encrypted_hex = aesjs.utils.hex.fromBytes(encrypted_bytes);
 
-                console.log(btoa(encrypted_bytes));
+                var encrypted_base64 = btoa(encrypted_bytes);
+                console.log(encrypted_base64);
+
+                update_modal(word_array, encrypted_base64, modal_body_elem);
             } else {
                 // update UI with progress complete
                 console.log(progress);
-
-                if (progress_element){
-                    progress_element.style = "width: " + progress * 100 + "%";
-                }
             }
         });
     } catch(err) {
-        key_fail_callback(num_words, data, attempts, progress_element);
+        key_fail_callback(num_words, data, attempts, modal_body_elem);
     }
 }
 
-function key_fail_callback(num_words, data, attempts, progress_element){
-    encrypt_data(num_words, data, attempts - 1, progress_element);
+function key_fail_callback(num_words, data, attempts, modal_body_elem){
+    encrypt_data(num_words, data, attempts - 1, modal_body_elem);
 }
 
 function get_random_word(){
@@ -55,4 +56,35 @@ function get_random_word(){
     window.crypto.getRandomValues(array);
     var item = word_list[array[0] % word_list.length];
     return item;
+}
+
+function update_modal(words, encrypted_str, modal_body_elem){
+    var display_encrypted_str = "";
+    if(encrypted_str.length > 32){
+        display_encrypted_str = encrypted_str.slice(0, 32) + '...';
+    } else {
+        display_encrypted_str = encrypted_str;
+    }
+
+    var html_str = "";
+    html_str += '<div class="card">';
+    html_str += '<div class="card-header">';
+    html_str += '<h5 class="card-title">Encryption Words</h5>';
+    html_str += '</div>';
+    html_str += '<ul class="list-group list-group-flush">';
+
+    for(var i = 0; i < words.length; i++){
+        html_str += '<li class="list-group-item">' + words[i] + '</li>';
+    }
+
+    html_str += '</ul>';
+    html_str += '<div class="card-header">';
+    html_str += '<h5 class="card-title">Encrypted Data</h5>';
+    html_str += '</div>';
+    html_str += '<div class="card-body">';
+    html_str += '<div class="row">' + display_encrypted_str + '</div>';
+    html_str += '</div>';
+    html_str += '</div>'; // card
+
+    modal_body_elem.innerHTML = html_str;
 }
