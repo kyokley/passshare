@@ -58,10 +58,29 @@ function get_random_word(){
     return item;
 }
 
+function display_full_data_in_new_window(data){
+    var new_window = window.open("", "_blank");
+    if(data.length > 80){
+        var split_str = "";
+        var i = 0;
+        while((i + 1) * 80 < data.length){
+            split_str += data.slice(i * 80, (i + 1) * 80) + "<br />";
+            i++;
+        }
+        split_str += data.slice(i * 80, data.length);
+
+        new_window.document.write(split_str);
+    } else {
+        new_window.document.write(data);
+    }
+}
+
 function update_modal(words, encrypted_str, modal_body_elem){
     var display_encrypted_str = "";
     if(encrypted_str.length > 32){
-        display_encrypted_str = encrypted_str.slice(0, 32) + '...';
+        display_encrypted_str += '<button class="btn btn-link" onclick="display_full_data_in_new_window(\'' + encrypted_str + '\')">';
+        display_encrypted_str += encrypted_str.slice(0, 32) + '...';
+        display_encrypted_str += '</button>'
     } else {
         display_encrypted_str = encrypted_str;
     }
