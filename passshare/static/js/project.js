@@ -88,7 +88,13 @@ function update_modal(words, encrypted_str, modal_body_elem){
     var html_str = "";
     html_str += '<div class="card">';
     html_str += '<div class="card-header">';
-    html_str += '<h5 class="card-title">Encryption Words</h5>';
+    html_str += '<h3 class="card-title">Encrypted Data</h5>';
+    html_str += '</div>';
+    html_str += '<div class="card-body">';
+    html_str += display_encrypted_str;
+    html_str += '</div>';
+    html_str += '<div class="card-header">';
+    html_str += '<h3 class="card-title">Encryption Words</h5>';
     html_str += '</div>';
     html_str += '<ul class="list-group list-group-flush">';
 
@@ -97,11 +103,18 @@ function update_modal(words, encrypted_str, modal_body_elem){
     }
 
     html_str += '</ul>';
+    html_str += '</div>'; // card
+    html_str += '<div class="card">';
     html_str += '<div class="card-header">';
-    html_str += '<h5 class="card-title">Encrypted Data</h5>';
+    html_str += '<h3 class="card-title">Warning</h5>';
     html_str += '</div>';
     html_str += '<div class="card-body">';
-    html_str += '<div class="row">' + display_encrypted_str + '</div>';
+    html_str += '<h5>';
+    html_str += 'By clicking upload below, your encrypted data will be uploaded to the server. ';
+    html_str += 'Be sure to write your encryption words down or store them someplace secure. ';
+    html_str += 'If those words are lost there is no way to recover your data.';
+    html_str += '</h5>';
+    html_str += '</div>';
     html_str += '</div>';
     html_str += '</div>'; // card
 
