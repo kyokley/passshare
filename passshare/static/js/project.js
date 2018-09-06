@@ -1,6 +1,3 @@
-/* Project specific Javascript goes here. */
-
-
 var N = 1024, r = 8, p = 1;
 
 var dkLen = 32;
@@ -110,9 +107,10 @@ function update_modal(words, encrypted_str, modal_body_elem){
     html_str += '</div>';
     html_str += '<div class="card-body">';
     html_str += '<h5>';
-    html_str += 'By clicking upload below, your encrypted data will be uploaded to the server. ';
-    html_str += 'Be sure to write your encryption words down or store them someplace secure. ';
-    html_str += 'If those words are lost there is no way to recover your data.';
+    html_str += '<p>By clicking upload below, your encrypted data will be uploaded to the server.</p>';
+    html_str += '<p>Be sure to write your encryption words down or store them someplace secure.</p>';
+    html_str += '<p></p>';
+    html_str += '<p><strong>** If those words are lost there is no way to recover your data. **</strong></p>';
     html_str += '</h5>';
     html_str += '</div>';
     html_str += '</div>';
