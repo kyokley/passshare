@@ -2,7 +2,13 @@ var N = 1024, r = 8, p = 1;
 
 var dkLen = 32;
 
+var encryption_words;
+var encrypted_str;
+
 function encrypt_data(num_words, data, attempts, modal_body_elem) {
+    encryption_words = "";
+    encrypted_str = "";
+
     if(attempts <= 0){
         console.log("Out of attempts. Giving up.");
         return;
@@ -33,7 +39,9 @@ function encrypt_data(num_words, data, attempts, modal_body_elem) {
                 var encrypted_base64 = btoa(encrypted_bytes);
                 console.log(encrypted_base64);
 
-                update_modal(word_array, encrypted_base64, modal_body_elem);
+                encryption_words = word_array;
+                encrypted_str = encrypted_base64;
+                update_modal(modal_body_elem);
             } else {
                 // update UI with progress complete
                 console.log(progress);
@@ -72,7 +80,7 @@ function display_full_data_in_new_window(data){
     }
 }
 
-function update_modal(words, encrypted_str, modal_body_elem){
+function update_modal(modal_body_elem){
     var display_encrypted_str = "";
     if(encrypted_str.length > 32){
         display_encrypted_str += '<button class="btn btn-link" onclick="display_full_data_in_new_window(\'' + encrypted_str + '\')">';
@@ -95,8 +103,8 @@ function update_modal(words, encrypted_str, modal_body_elem){
     html_str += '</div>';
     html_str += '<ul class="list-group list-group-flush">';
 
-    for(var i = 0; i < words.length; i++){
-        html_str += '<li class="list-group-item">' + words[i] + '</li>';
+    for(var i = 0; i < encryption_words.length; i++){
+        html_str += '<li class="list-group-item">' + encryption_words[i] + '</li>';
     }
 
     html_str += '</ul>';
@@ -107,7 +115,7 @@ function update_modal(words, encrypted_str, modal_body_elem){
     html_str += '</div>';
     html_str += '<div class="card-body">';
     html_str += '<h5>';
-    html_str += '<p>By clicking upload below, your encrypted data will be uploaded to the server.</p>';
+    html_str += '<p>By clicking upload below, your encrypted data will be uploaded to the server. The words used for encryption will <strong>NOT</strong> be transmitted in any way.</p>';
     html_str += '<p>Be sure to write your encryption words down or store them someplace secure.</p>';
     html_str += '<p></p>';
     html_str += '<p><strong>** If those words are lost there is no way to recover your data. **</strong></p>';
@@ -117,4 +125,8 @@ function update_modal(words, encrypted_str, modal_body_elem){
     html_str += '</div>'; // card
 
     modal_body_elem.innerHTML = html_str;
+}
+
+function upload_data(){
+
 }
