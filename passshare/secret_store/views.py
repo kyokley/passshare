@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
 
 from passshare.secret_store.models import TextSecret, UPSecret, FileSecret
 from passshare.secret_store import serializers
+from passshare.secret_store.permissions import IsOwnerOrSharedWith
 
 def create(request):
     user = request.user
@@ -44,6 +46,19 @@ def manage(request):
 def recover(request):
     pass
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = serializers.UserSerializer
+    permission_classes = (permissions.IsAdminUser,)
+
+class TextSecretViewSet(viewsets.ModelViewSet):
+    queryset = TextSecret.objects.all()
+    serializer_class = serializers.TextSecretSerializer
+    permission_classes = (IsOwnerOrSharedWith,)
+
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.validated_data['owner'] = request.user
+            serializer.save()
+            return Response(serializer.data)
