@@ -1,7 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from django.http import HttpResponse
+from rest_framework import viewsets
 
 from passshare.secret_store.models import TextSecret, UPSecret, FileSecret
+from passshare.secret_store import serializers
 
 def create(request):
     user = request.user
@@ -41,3 +43,7 @@ def manage(request):
 
 def recover(request):
     pass
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = get_user_model().objects.all()
+    serializer_class = serializers.UserSerializer
