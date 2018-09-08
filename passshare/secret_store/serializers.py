@@ -19,6 +19,7 @@ class TextSecretSerializer(SecretSerializer):
     class Meta:
         model = TextSecret
         fields = ('url',
+                  'owner',
                   'countdown',
                   'unencrypted_hash',
                   'size',
@@ -27,7 +28,7 @@ class TextSecretSerializer(SecretSerializer):
                   'data',
                   'label',
                   )
-        read_only_fields = ('owner',)
+        read_only_fields = ('owner', 'size')
 
     def create(self, validated_data):
         return TextSecret.new(validated_data['owner'],

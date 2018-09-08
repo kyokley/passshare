@@ -50,8 +50,8 @@
                             <input type="text" class="form-control" id="form-text-data" placeholder="Share Data">
                         </div>
                         <div class="form-group">
-                            <label for="form-text-select">Passphrase Complexity</label>
-                            <select class="form-control" id="form-text-select">
+                            <label for="form-text-complexity">Passphrase Complexity</label>
+                            <select class="form-control" id="form-text-complexity">
                                 <option>4</option>
                                 <option>8</option>
                                 <option>12</option>
@@ -60,7 +60,15 @@
                                 <option>24</option>
                             </select>
                         </div>
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#text-based-modal" onclick="handle_text_modal_create()">Create</button>
+                        <div class="form-group">
+                            <label for="form-text-countdown">Countdown</label>
+                            <select class="form-control" id="form-text-countdown">
+                                {% for key, value in countdown_options %}
+                                    <option>{{ key }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#text-based-modal" onclick="handle_text_modal_create();">Create</button>
                     </form>
                     <div class="modal fade" id="text-based-modal" tabindex="-1" role="dialog" aria-labelledby="text-based-modal" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -77,7 +85,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn btn-primary">Upload</button>
+                                    <button type="button" class="btn btn-primary" onclick="upload_data();">Upload</button>
                                 </div>
                             </div>
                         </div>
@@ -173,14 +181,20 @@
 {% block javascript %}
     {{block.super}}
     <script type="text/javascript">
+        $(document).ready(function(){
+            var text_countdown_elem = document.getElementById("form-text-countdown");
+            text_countdown_elem.value = {{ countdown_default }};
+        });
+
         function handle_text_modal_create(){
             var text_modal_body_elem = document.getElementById("text-modal-body");
 
-
             var data = document.getElementById("form-text-data").value;
-            var complexity = document.getElementById("form-text-select").value;
+            var complexity = document.getElementById("form-text-complexity").value;
+            var countdown = document.getElementById("form-text-countdown").value;
+            var label = document.getElementById("form-text-label").value;
 
-            encrypt_data(complexity, data, 1000, text_modal_body_elem);
+            create_text_share(complexity, data, countdown, label, text_modal_body_elem);
         }
     </script>
 {% endblock %}

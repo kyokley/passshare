@@ -1,12 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
-from passshare.secret_store.models import TextSecret, UPSecret, FileSecret
+from passshare.secret_store.models import TextSecret, UPSecret, FileSecret, COUNTDOWN_CHOICES, COUNTDOWN_DEFAULT
 from passshare.secret_store import serializers
 from passshare.secret_store.permissions import IsOwnerOrSharedWith
 
+@ensure_csrf_cookie
 def create(request):
     user = request.user
 
@@ -22,6 +24,8 @@ def create(request):
                'text_shares': text_shares,
                'up_shares': up_shares,
                'file_shares': file_shares,
+               'countdown_options': COUNTDOWN_CHOICES,
+               'countdown_default': COUNTDOWN_DEFAULT,
             }
     return render(request, 'secret_store/create.html', context)
 
@@ -62,3 +66,6 @@ class TextSecretViewSet(viewsets.ModelViewSet):
             serializer.validated_data['owner'] = request.user
             serializer.save()
             return Response(serializer.data)
+        else:
+            # TODO: Make failures return something useful
+            pass

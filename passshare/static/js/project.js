@@ -4,11 +4,21 @@ var dkLen = 32;
 
 var encryption_words;
 var encrypted_str;
+var share_label;
+var release_countdown;
+var unencrypted_hash;
 
-function encrypt_data(num_words, data, attempts, modal_body_elem) {
+function create_text_share(num_words, data, countdown, label, modal_elem){
     encryption_words = "";
     encrypted_str = "";
+    release_countdown = countdown;
+    share_label = label;
+    unencrypted_hash = "";
 
+    encrypt_data(num_words, data, 1000, modal_elem);
+}
+
+function encrypt_data(num_words, data, attempts, modal_body_elem) {
     if(attempts <= 0){
         console.log("Out of attempts. Giving up.");
         return;
@@ -22,8 +32,14 @@ function encrypt_data(num_words, data, attempts, modal_body_elem) {
 
     password_buffer = new buffer.SlowBuffer(passphrase.normalize("NFKC"));
     salt_buffer = new buffer.SlowBuffer(username.normalize("NFKC"));
+    //data_buffer = new buffer.SlowBuffer(data.normalize("NFKC"));
+
+    var raw_data_hash = sha256.create();
+    raw_data_hash.update((username + data).normalize("NFKC"));
+    unencrypted_hash = raw_data_hash.hex();
 
     password_array = [...password_buffer];
+    //data_array = [...data_buffer];
     try{
         scrypt(password_array, salt_buffer, N, r, p, dkLen, function(error, progress, key) {
             if (error) {
@@ -47,6 +63,13 @@ function encrypt_data(num_words, data, attempts, modal_body_elem) {
                 console.log(progress);
             }
         });
+
+        //scrypt(data_array, salt_buffer, N, r, p, dkLen, function(error, progress, key) {
+        //    if (key) {
+        //        console.log("Hash key: " + key);
+        //        unencrypted_hash = btoa(key);
+        //    }
+        //});
     } catch(err) {
         key_fail_callback(num_words, data, attempts, modal_body_elem);
     }
@@ -111,6 +134,14 @@ function update_modal(modal_body_elem){
     html_str += '</div>'; // card
     html_str += '<div class="card">';
     html_str += '<div class="card-header">';
+    html_str += '<h3 class="card-title">Countdown</h3>';
+    html_str += '</div>';
+    html_str += '<div class="card-body">';
+    html_str += release_countdown;
+    html_str += '</div>';
+    html_str += '</div>';
+    html_str += '<div class="card">';
+    html_str += '<div class="card-header">';
     html_str += '<h3 class="card-title">Warning</h5>';
     html_str += '</div>';
     html_str += '<div class="card-body">';
@@ -127,6 +158,39 @@ function update_modal(modal_body_elem){
     modal_body_elem.innerHTML = html_str;
 }
 
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 function upload_data(){
+    var csrftoken = getCookie('csrftoken');
 
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            location.reload(true);
+        }
+    };
+    xhttp.open("POST", "/secret/api/text_secret/", true);
+
+    var data = {"countdown": release_countdown,
+                "unencrypted_hash": unencrypted_hash,
+                "label": share_label,
+                "data": encrypted_str}
+
+    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhttp.setRequestHeader("X-CSRFToken", csrftoken);
+    xhttp.send(JSON.stringify(data));
 }
