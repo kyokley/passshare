@@ -173,6 +173,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
 function upload_data(){
     var csrftoken = getCookie('csrftoken');
 
@@ -193,4 +194,20 @@ function upload_data(){
     xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhttp.setRequestHeader("X-CSRFToken", csrftoken);
     xhttp.send(JSON.stringify(data));
+}
+
+function delete_share(pk){
+    var csrftoken = getCookie('csrftoken');
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        console.log("Statuscode: " + this.status);
+        if (this.readyState == 4 && (this.status == 200 || this.status == 204)) {
+            location.reload(true);
+        }
+    };
+    xhttp.open("DELETE", "/secret/api/text_secret/" + pk + "/", true);
+    xhttp.setRequestHeader("X-CSRFToken", csrftoken);
+    xhttp.send();
 }

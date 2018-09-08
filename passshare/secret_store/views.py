@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
@@ -69,3 +69,11 @@ class TextSecretViewSet(viewsets.ModelViewSet):
         else:
             # TODO: Make failures return something useful
             pass
+
+    def destroy(self, request, pk=None):
+        obj = get_object_or_404(self.queryset, pk=pk)
+
+        if obj.owner != self.request.user:
+            raise Exception('User is not the owner of this object')
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
