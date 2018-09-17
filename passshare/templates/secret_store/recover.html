@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block active_navbar %}
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">Home </a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="{% url 'about' %}">About</a>
+        </li>
+        {% if request.user.is_authenticated %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'create' %}">Create</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'manage' %}">Manage</a>
+            </li>
+            <li class="nav-item active">
+            <a class="nav-link" href="{% url 'recover' %}">Recover<span class="sr-only">(current)</span></a>
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="card text-center">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#pending-tab">Pending</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="pending-tab" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <h5 class="card-title">Pending Shares</h5>
+                    {% if pending_shares %}
+                        <div class="accordion" id="pending-share-accordion">
+                            {% for pending_share in pending_shares %}
+                                <div class="card">
+                                    <div class="card-header" id="pending-share-heading{{forloop.counter}}">
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#pending-share-collapse{{forloop.counter}}" aria-expanded="true" aria-controls="pending-share-collapse{{forloop.counter}}">{{text_share.label}} : {{text_share.display_hash}}</button>
+                                        </h5>
+                                    </div>
+
+                                    <div id="pending-share-collapse{{forloop.counter}}" class="collapse" aria-labelledby="pending-share-heading{{forloop.counter}}" data-parent="#pending-share-accordion">
+                                        <div class="card-body">
+                                            <table class="table table-borderless">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Encrypted Data</th>
+                                                        <th scope="col">Size (in bytes)</th>
+                                                        <th scope="col">Countdown</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>{{text_share.display_data}}</td>
+                                                        <td>{{text_share.size}}</td>
+                                                        <td>{{text_share.countdown}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="row justify-content-center">
+                                                <div class="col-4">
+                                                    <button class="btn btn-danger" onclick="delete_share({{ text_share.id }});">Delete</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="card-text">Nothing to show here</p>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
