@@ -54,9 +54,9 @@ def recover(request):
     if not user.is_authenticated:
         raise Exception('User not authenticated')
 
-    text_shares = TextSecret.objects.filter(owner=user)
-    up_shares = UPSecret.objects.filter(owner=user)
-    file_shares = FileSecret.objects.filter(owner=user)
+    text_shares = TextSecret.objects.filter(viewers=user)
+    up_shares = UPSecret.objects.filter(viewers=user)
+    file_shares = FileSecret.objects.filter(viewers=user)
 
     context = {'user': request.user,
                'text_shares': text_shares,
