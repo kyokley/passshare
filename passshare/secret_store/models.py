@@ -25,6 +25,12 @@ SITE_MAX_LENGTH = 256
 
 DISPLAY_TRUNCATE_LENGTH = 32
 
+(TEXT_SECRET,
+ FILE_SECRET,
+ UP_SECRET) = SECRET_TYPES = ('text_secret',
+                              'file_secret',
+                              'up_secret')
+
 
 class Secret(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -70,6 +76,19 @@ class Secret(models.Model):
         instance.size = size
 
         return instance
+
+    @staticmethod
+    def get_secret(pk, secret_type):
+        if secret_type == TEXT_SECRET:
+            secret = TextSecret.objects.get(pk=pk)
+        elif secret_type == FILE_SECRET:
+            secret = FileSecret.objects.get(pk=pk)
+        elif secret_type == UP_SECRET:
+            secret = UPSecret.objects.get(pk=pk)
+        else:
+            secret = None
+
+        return secret
 
 
 class TextSecret(Secret):

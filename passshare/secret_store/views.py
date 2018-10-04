@@ -69,6 +69,10 @@ def recover(request):
     return render(request, 'secret_store/recover.html', context)
 
 
+def start_recovery(request, pk):
+    pass
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = serializers.UserSerializer
