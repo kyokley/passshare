@@ -7,13 +7,16 @@ from passshare.secret_store.models import (TextSecret,
                                            COUNTDOWN_DEFAULT,
                                            )
 
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('url', 'username', 'email', 'groups')
 
+
 class SecretSerializer(serializers.HyperlinkedModelSerializer):
     pass
+
 
 class TextSecretSerializer(SecretSerializer):
     class Meta:

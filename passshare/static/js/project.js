@@ -116,7 +116,7 @@ function update_modal(modal_body_elem){
     var html_str = "";
     html_str += '<div class="card">';
     html_str += '<div class="card-header">';
-    html_str += '<h3 class="card-title">Encrypted Data</h5>';
+    html_str += '<h3 class="card-title">Encrypted Data</h3>';
     html_str += '</div>';
     html_str += '<div class="card-body">';
     html_str += display_encrypted_str;
@@ -156,6 +156,32 @@ function update_modal(modal_body_elem){
     html_str += '</div>'; // card
 
     modal_body_elem.innerHTML = html_str;
+}
+
+function recover_modal(modal_body_elem){
+    var display_encrypted_str = "";
+    if(encrypted_str.length > 32){
+        display_encrypted_str += '<button class="btn btn-link" onclick="display_full_data_in_new_window(\'' + encrypted_str + '\')">';
+        display_encrypted_str += encrypted_str.slice(0, 32) + '...';
+        display_encrypted_str += '</button>'
+    } else {
+        display_encrypted_str = encrypted_str;
+    }
+
+    var html_str = "";
+    html_str += '<div class="card">';
+    html_str += '    <div class="card-header">';
+    html_str += '        <h3 class="card-title">Request Secret Access</h3>';
+    html_str += '    </div>';
+    html_str += '    <div class="card-body">';
+    html_str += display_encrypted_str;
+    html_str += '    </div>';
+    html_str += '    <div class="card-header">';
+    html_str += '    </div>';
+    html_str += '</div>';
+
+    modal_body_elem.innerHTML = html_str;
+
 }
 
 function getCookie(name) {

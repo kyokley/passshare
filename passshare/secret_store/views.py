@@ -8,6 +8,7 @@ from passshare.secret_store.models import TextSecret, UPSecret, FileSecret, COUN
 from passshare.secret_store import serializers
 from passshare.secret_store.permissions import IsOwnerOrSharedWith
 
+
 @ensure_csrf_cookie
 def create(request):
     user = request.user
@@ -26,8 +27,9 @@ def create(request):
                'file_shares': file_shares,
                'countdown_options': COUNTDOWN_CHOICES,
                'countdown_default': COUNTDOWN_DEFAULT,
-            }
+               }
     return render(request, 'secret_store/create.html', context)
+
 
 def manage(request):
     user = request.user
@@ -44,8 +46,9 @@ def manage(request):
                'text_shares': text_shares,
                'up_shares': up_shares,
                'file_shares': file_shares,
-            }
+               }
     return render(request, 'secret_store/manage.html', context)
+
 
 def recover(request):
     user = request.user
@@ -62,13 +65,15 @@ def recover(request):
                'text_shares': text_shares,
                'up_shares': up_shares,
                'file_shares': file_shares,
-            }
+               }
     return render(request, 'secret_store/recover.html', context)
+
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = serializers.UserSerializer
     permission_classes = (permissions.IsAdminUser,)
+
 
 class TextSecretViewSet(viewsets.ModelViewSet):
     queryset = TextSecret.objects.all()

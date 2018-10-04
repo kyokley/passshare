@@ -25,6 +25,7 @@ SITE_MAX_LENGTH = 256
 
 DISPLAY_TRUNCATE_LENGTH = 32
 
+
 class Secret(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               on_delete=models.CASCADE)
@@ -51,8 +52,8 @@ class Secret(models.Model):
     @property
     def display_hash(self):
         return (self.unencrypted_hash[:DISPLAY_TRUNCATE_LENGTH] + '...'
-                    if len(self.unencrypted_hash) > DISPLAY_TRUNCATE_LENGTH
-                    else self.unencrypted_hash)
+                if len(self.unencrypted_hash) > DISPLAY_TRUNCATE_LENGTH
+                else self.unencrypted_hash)
 
     @classmethod
     def new(cls,
@@ -70,8 +71,9 @@ class Secret(models.Model):
 
         return instance
 
+
 class TextSecret(Secret):
-    data = models.TextField(null=False, # base64 encoded encrypted data
+    data = models.TextField(null=False,  # base64 encoded encrypted data
                             blank=False,
                             )
     label = models.CharField(max_length=LABEL_MAX_LENGTH,
@@ -93,8 +95,8 @@ class TextSecret(Secret):
     @property
     def display_data(self):
         return (self.data[:DISPLAY_TRUNCATE_LENGTH] + '...'
-                    if len(self.data) > DISPLAY_TRUNCATE_LENGTH
-                    else self.data)
+                if len(self.data) > DISPLAY_TRUNCATE_LENGTH
+                else self.data)
 
     @classmethod
     def new(cls,
@@ -143,7 +145,7 @@ class TextSecret(Secret):
 
 
 class FileSecret(Secret):
-    file_path = models.TextField(null=True, # location on the filesystem where encrypted data lives
+    file_path = models.TextField(null=True,  # location on the filesystem where encrypted data lives
                                  blank=True,
                                  )
     filename = models.CharField(max_length=FILENAME_MAX_LENGTH,
@@ -185,7 +187,6 @@ class FileSecret(Secret):
         if not raw_data:
             raise Exception('Data must be provided')
 
-
         instance = super().new(owner,
                                unencrypted_hash,
                                countdown=countdown,
@@ -199,8 +200,10 @@ class FileSecret(Secret):
         with open(instance.file_path, 'wb') as f:
             f.write(raw_data)
 
-        instance._display_data = (raw_data[:DISPLAY_TRUNCATE_LENGTH].decode('utf-8') if len(raw_data) > DISPLAY_TRUNCATE_LENGTH
-                                     else raw_data.decode('utf-8'))
+        instance._display_data = (
+                raw_data[:DISPLAY_TRUNCATE_LENGTH].decode('utf-8')
+                if len(raw_data) > DISPLAY_TRUNCATE_LENGTH
+                else raw_data.decode('utf-8'))
 
         instance.save()
         return instance
@@ -234,10 +237,11 @@ class FileSecret(Secret):
                            )
         return instance
 
+
 class UPSecret(Secret):
-    password = models.TextField(null=False, # base64 encoded encrypted data
-                            blank=False,
-                            )
+    password = models.TextField(null=False,  # base64 encoded encrypted data
+                                blank=False,
+                                )
     username = models.CharField(max_length=USERNAME_MAX_LENGTH,
                                 null=False,
                                 blank=False)
@@ -257,11 +261,12 @@ class UPSecret(Secret):
                                                                                username=self.username,
                                                                                hash=self.display_hash,
                                                                                )
+
     @property
     def display_password(self):
         return (self.password[:DISPLAY_TRUNCATE_LENGTH] + '...'
-                    if len(self.password) > DISPLAY_TRUNCATE_LENGTH
-                    else self.password)
+                if len(self.password) > DISPLAY_TRUNCATE_LENGTH
+                else self.password)
 
     @classmethod
     def new(cls,
@@ -274,9 +279,9 @@ class UPSecret(Secret):
             size=SIZE_DEFAULT,
             ):
         instance = super().new(owner,
-                    unencrypted_hash,
-                    countdown=countdown,
-                    size=size)
+                               unencrypted_hash,
+                               countdown=countdown,
+                               size=size)
 
         instance.username = username
         instance.password = password
