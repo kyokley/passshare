@@ -2,8 +2,9 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from passshare.secret_store.models import (TextSecret,
-                                           UPSecret,
-                                           FileSecret,
+                                           # UPSecret,
+                                           # FileSecret,
+                                           RecoveredTextSecret,
                                            COUNTDOWN_DEFAULT,
                                            )
 
@@ -39,3 +40,14 @@ class TextSecretSerializer(SecretSerializer):
                               validated_data['data'],
                               validated_data['unencrypted_hash'],
                               countdown=validated_data.get('countdown', COUNTDOWN_DEFAULT))
+
+
+class RecoveredTextSecretSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = RecoveredTextSecret
+        fields = ('url',
+                  'text_secret',
+                  'user',
+                  'release_date',
+                  'date_created',
+                  )

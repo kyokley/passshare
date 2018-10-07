@@ -4,9 +4,15 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
-from passshare.secret_store.models import TextSecret, UPSecret, FileSecret, COUNTDOWN_CHOICES, COUNTDOWN_DEFAULT
+from passshare.secret_store.models import (TextSecret,
+                                           UPSecret,
+                                           FileSecret,
+                                           RecoveredTextSecret,
+                                           COUNTDOWN_CHOICES,
+                                           COUNTDOWN_DEFAULT,
+                                           )
 from passshare.secret_store import serializers
-from passshare.secret_store.permissions import IsOwnerOrSharedWith
+from passshare.secret_store.permissions import IsOwnerOrSharedWith, IsOwner
 
 
 @ensure_csrf_cookie
@@ -101,3 +107,9 @@ class TextSecretViewSet(viewsets.ModelViewSet):
             raise Exception('User is not the owner of this object')
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RecoveredTextSecretViewSet(viewsets.ModelViewSet):
+    queryset = RecoveredTextSecret.objects.all()
+    serializer_class = serializers.RecoveredTextSecretSerializer
+    permission_classes = (IsOwner,)

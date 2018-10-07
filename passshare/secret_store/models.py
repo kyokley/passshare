@@ -2,6 +2,8 @@ import base64
 import os
 import hashlib
 
+from datetime import date
+
 from django.db import models
 from django.conf import settings
 
@@ -161,6 +163,29 @@ class TextSecret(Secret):
                            countdown=countdown,
                            )
         return instance
+
+
+class RecoveredTextSecret(models.Model):
+    text_secret = models.ForeignKey(TextSecret,
+                                    on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    release_date = models.DateField(null=False,
+                                    blank=True)
+    date_created = models.DateField(auto_now_add=True)
+
+    @classmethod
+    def new(cls, text_secret, user):
+        new_obj = cls()
+        new_obj.text_secret = text_secret
+        new_obj.user = user
+        new_obj.release_date = date.today() + text_secret.countdown
+
+        return new_obj
+
+    @property
+    def released(self):
+        return date.today() > self.release_date
 
 
 class FileSecret(Secret):
